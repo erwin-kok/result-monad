@@ -57,7 +57,7 @@ tasks {
         kotlinOptions {
             @Suppress("SpellCheckingInspection")
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            allWarningsAsErrors = false
+            allWarningsAsErrors = true
             jvmTarget = "11"
             languageVersion = "1.7"
             apiVersion = "1.7"
@@ -69,7 +69,7 @@ tasks {
         kotlinOptions {
             @Suppress("SpellCheckingInspection")
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            allWarningsAsErrors = false
+            allWarningsAsErrors = true
             jvmTarget = "11"
             languageVersion = "1.7"
             apiVersion = "1.7"
@@ -81,7 +81,7 @@ tasks {
         kotlinOptions {
             @Suppress("SpellCheckingInspection")
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            allWarningsAsErrors = false
+            allWarningsAsErrors = true
             jvmTarget = "11"
             languageVersion = "1.7"
             apiVersion = "1.7"

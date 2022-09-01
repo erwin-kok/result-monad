@@ -151,10 +151,11 @@ Bug reports and pull requests are welcome on [GitHub](https://github.com).
 
 ## License
 
-This project is licensed under the ISC license, see [`LICxENSE`](LICENSE) file for more details. 
+This project is licensed under the BSD-3 license, see [`LICENSE`](LICENSE) file for more details. 
 
 
-Since this project is partly based on the awesome `kotlin-result` project, created by Michael Bull, I add that license here as well:
+Since this project is partly based on the awesome `kotlin-result` project, created by Michael Bull, 
+I add that license here as well:
 
 ```text
 Copyright (c) 2017-2022 Michael Bull (https://www.michael-bull.com)
