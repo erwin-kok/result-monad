@@ -151,7 +151,7 @@ Bug reports and pull requests are welcome on [GitHub](https://github.com).
 
 ## License
 
-This project is licensed under the BSD-3 license, see [`LICENSE`](LICENSE) file for more details. 
+This project is licensed under the BSD-3-Clause license, see [`LICENSE`](LICENSE) file for more details. 
 
 
 Since this project is partly based on the awesome `kotlin-result` project, created by Michael Bull, 
