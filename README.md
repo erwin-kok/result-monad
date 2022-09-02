@@ -1,7 +1,7 @@
 # Result Monad
 
+[![CI Status](https://github.com/erwin-kok/result-monad/workflows/ci/badge.svg)](https://github.com/erwin-kok/result-monad/actions?query=workflow%3Aci)
 [![License](https://img.shields.io/github/license/erwin-kok/result-monad.svg)](https://github.com/erwin-kok/result-monad/blob/master/LICENSE)
-
 
 ## Introduction
 
@@ -147,7 +147,7 @@ Remember, an `Error` is a small wrapper around a string, and the error case of t
 
 ## Contributing
 
-Bug reports and pull requests are welcome on [GitHub](https://github.com).
+Bug reports and pull requests are welcome on [GitHub](https://github.com/erwin-kok/result-monad).
 
 ## License
 
