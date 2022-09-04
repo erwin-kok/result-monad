@@ -203,3 +203,18 @@ inline fun <V> Result<V>.toErrorUnless(predicate: (V) -> Boolean, transform: (V)
         is Err -> this
     }
 }
+
+fun <V> combine(vararg results: Result<V>): Result<List<V>> {
+    return results.asIterable().combine()
+}
+
+fun <V> Iterable<Result<V>>.combine(): Result<List<V>> {
+    return Ok(
+        map {
+            when (it) {
+                is Ok -> it.value
+                is Err -> return it
+            }
+        }
+    )
+}

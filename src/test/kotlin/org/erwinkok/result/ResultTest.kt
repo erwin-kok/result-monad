@@ -299,4 +299,32 @@ internal class ResultTest {
         ) as Err
         assertEquals(Error("first"), result.error)
     }
+
+    @Test
+    fun `returns all values when ok`() {
+        val values = combine(
+            Ok(10),
+            Ok(20),
+            Ok(30)
+        ).get()!!
+        assertEquals(3, values.size)
+        assertEquals(10, values[0])
+        assertEquals(20, values[1])
+        assertEquals(30, values[2])
+    }
+
+    @Test
+    fun `return first error when err`() {
+        val firstError = Error("First")
+        val secondError = Error("second")
+        val result = combine(
+            Ok(20),
+            Ok(40),
+            Err(firstError),
+            Ok(60),
+            Err(secondError),
+            Ok(80)
+        ) as Err
+        assertSame(firstError, result.error)
+    }
 }
