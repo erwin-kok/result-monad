@@ -10,7 +10,27 @@ fun assertErrorResult(message: String, executable: () -> Result<Any>) {
         }
 }
 
+suspend fun coAssertErrorResult(message: String, executable: suspend () -> Result<Any>) {
+    executable()
+        .onSuccess {
+            error("Expected error, but was: $it")
+        }
+        .onFailure {
+            check(message == it.message) { "Error message '${errorMessage(it)}' was not equal to '$message'" }
+        }
+}
+
 fun assertErrorResultMatches(regex: Regex, executable: () -> Result<Any>) {
+    executable()
+        .onSuccess {
+            error("Expected error, but was: $it")
+        }
+        .onFailure {
+            check(it.message.matches(regex)) { "Error message '${errorMessage(it)}' did not match '$regex'" }
+        }
+}
+
+suspend fun coAssertErrorResultMatches(regex: Regex, executable: suspend () -> Result<Any>) {
     executable()
         .onSuccess {
             error("Expected error, but was: $it")
