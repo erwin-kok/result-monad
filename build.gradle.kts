@@ -1,26 +1,20 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.api.tasks.testing.logging.TestStackTraceFilter
 
-// Without these suppressions, version catalog usage here and in other build
-// files is marked red by IntelliJ:
-// https://youtrack.jetbrains.com/issue/KTIJ-19369.
-@Suppress(
-    "DSL_SCOPE_VIOLATION",
-    "MISSING_DEPENDENCY_CLASS",
-    "UNRESOLVED_REFERENCE_WRONG_RECEIVER",
-    "FUNCTION_CALL_EXPECTED"
-)
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     kotlin("jvm") version "1.7.10"
     `java-library`
-
-    id("java-test-fixtures")
-    id("maven-publish")
-    id("signing")
+    `java-test-fixtures`
+    signing
+    `maven-publish`
 
     alias(libs.plugins.build.kover)
     alias(libs.plugins.build.ktlint)
+    alias(libs.plugins.build.nexus)
 }
 
 repositories {
@@ -28,12 +22,11 @@ repositories {
 }
 
 group = "org.erwinkok.result"
-version = "0.1.0-SNAPSHOT"
+version = "0.2.0-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
-    withSourcesJar()
 }
 
 dependencies {
@@ -42,6 +35,7 @@ dependencies {
 
     implementation(libs.kotlin.logging)
 
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
 
@@ -87,6 +81,18 @@ tasks {
             apiVersion = "1.7"
         }
     }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events = setOf(TestLogEvent.PASSED, TestLogEvent.FAILED)
+            exceptionFormat = TestExceptionFormat.FULL
+            showExceptions = true
+            showCauses = true
+            maxGranularity = 3
+            stackTraceFilters = setOf(TestStackTraceFilter.ENTRY_POINT)
+        }
+    }
 }
 
 kover {
@@ -99,28 +105,49 @@ koverMerged {
     enable()
 }
 
-tasks.test {
-    useJUnitPlatform()
-    testLogging {
-        events = setOf(TestLogEvent.PASSED, TestLogEvent.FAILED)
-        exceptionFormat = TestExceptionFormat.FULL
-        showExceptions = true
-        showCauses = true
-        maxGranularity = 3
-        stackTraceFilters = setOf(TestStackTraceFilter.ENTRY_POINT)
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            pom {
+                name.set(project.name)
+                inceptionYear.set("2022")
+                url.set("https://github.com/erwin-kok/result-monad")
+                licenses {
+                    license {
+                        name.set("BSD-3-Clause")
+                        url.set("https://opensource.org/licenses/BSD-3-Clause")
+                    }
+                }
+                developers {
+                    developer {
+                        name.set("Erwin Kok")
+                        url.set("https://github.com/erwin-kok/")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/erwin-kok/result-monad")
+                    connection.set("scm:git:https://github.com/erwin-kok/result-monad")
+                    developerConnection.set("scm:git:ssh://git@github.com:erwin-kok/result-monad.git")
+                }
+                issueManagement {
+                    system.set("GitHub")
+                    url.set("https://github.com/erwin-kok/result-monad/issues")
+                }
+            }
+        }
     }
 }
 
-publishing {
+signing {
+    sign(publishing.publications["mavenJava"])
+}
+
+nexusPublishing {
     repositories {
-        maven {
-            // change to point to your repo, e.g. http://my.org/repo
-            url = uri("$buildDir/repo")
-        }
-    }
-    publications {
-        register("mavenJava", MavenPublication::class) {
-            from(components["java"])
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
         }
     }
 }
