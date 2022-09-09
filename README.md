@@ -161,6 +161,10 @@ return Err(illegalArgumentError)
 
 Bug reports and pull requests are welcome on [GitHub](https://github.com/erwin-kok/result-monad).
 
+## Contact
+
+If you want to contact me, please write an e-mail to: github@erwinkok.org
+
 ## License
 
 This project is licensed under the BSD-3-Clause license, see [`LICENSE`](LICENSE) file for more details.
