@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class ErrorTest {
     @Test
@@ -21,12 +22,12 @@ internal class ErrorTest {
 
     @Test
     fun `errors should be equal for string and throwable`() {
-        assertEquals(Error("illegal"), Error(IllegalArgumentException("illegal")))
+        assertEquals(Error("illegal <java.lang.IllegalArgumentException>"), Error(IllegalArgumentException("illegal")))
     }
 
     @Test
     fun `errors should be unknown for string and empty throwable`() {
-        assertEquals(Error("<unknown>"), Error(IllegalArgumentException()))
+        assertEquals(Error("<unknown> <java.lang.IllegalArgumentException>"), Error(IllegalArgumentException()))
     }
 
     @Test
@@ -74,5 +75,35 @@ internal class ErrorTest {
     @Test
     fun `errorMessage is unknown for empty throwable`() {
         assertEquals("<unknown>", errorMessage(IllegalArgumentException()))
+    }
+
+    @Test
+    fun `has stackTrace for Error`() {
+        val stackTrace = Error("Oh No!").stackTrace()
+        val methodName = object {}.javaClass.enclosingMethod.name
+        assertTrue(stackTrace.contains("Error occurred: Oh No!"))
+        assertTrue(stackTrace.contains(methodName))
+        assertFalse(stackTrace.contains("Caused by:"))
+    }
+
+    @Test
+    fun `has stackTrace with caused by for thrown exception`() {
+        val exception = assertThrows<IllegalArgumentException> { throw IllegalArgumentException("Test") }
+        val stackTrace = Error(exception).stackTrace()
+        val methodName = object {}.javaClass.enclosingMethod.name
+        assertTrue(stackTrace.contains("Error occurred: Test <java.lang.IllegalArgumentException>"))
+        assertTrue(stackTrace.contains(methodName))
+        assertTrue(stackTrace.contains("Caused by:"))
+        assertTrue(stackTrace.contains("java.lang.IllegalArgumentException: Test"))
+    }
+
+    @Test
+    fun `has stackTrace for copied Error`() {
+        val error = Error("Oh Yes!")
+        val stackTrace = Error(error).stackTrace()
+        val methodName = object {}.javaClass.enclosingMethod.name
+        assertTrue(stackTrace.contains("Error occurred: Oh Yes!"))
+        assertTrue(stackTrace.contains(methodName))
+        assertFalse(stackTrace.contains("Caused by:"))
     }
 }
