@@ -139,7 +139,7 @@ Remember, an `Error` is a small wrapper around a string, and the error case of t
 means, the Exception type is lost. However, this can be solved by using a fixed Error:
 
 ```kotlin
-    val illegalArgumentError = Error("The argument provided is illegal")
+val illegalArgumentError = Error("The argument provided is illegal")
 ...
 return Err(illegalArgumentError)
 ```
