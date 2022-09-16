@@ -6,7 +6,39 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-sealed class Result<out V>
+sealed class Result<out V> {
+    companion object {
+        fun <A, B, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, combine: (A, B) -> Result<V>): Result<V> {
+            val v1 = f1().getOrElse { return Err(it) }
+            val v2 = f2().getOrElse { return Err(it) }
+            return combine(v1, v2)
+        }
+
+        fun <A, B, C, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, combine: (A, B, C) -> Result<V>): Result<V> {
+            val v1 = f1().getOrElse { return Err(it) }
+            val v2 = f2().getOrElse { return Err(it) }
+            val v3 = f3().getOrElse { return Err(it) }
+            return combine(v1, v2, v3)
+        }
+
+        fun <A, B, C, D, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, f4: () -> Result<D>, combine: (A, B, C, D) -> Result<V>): Result<V> {
+            val v1 = f1().getOrElse { return Err(it) }
+            val v2 = f2().getOrElse { return Err(it) }
+            val v3 = f3().getOrElse { return Err(it) }
+            val v4 = f4().getOrElse { return Err(it) }
+            return combine(v1, v2, v3, v4)
+        }
+
+        fun <A, B, C, D, E, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, f4: () -> Result<D>, f5: () -> Result<E>, combine: (A, B, C, D, E) -> Result<V>): Result<V> {
+            val v1 = f1().getOrElse { return Err(it) }
+            val v2 = f2().getOrElse { return Err(it) }
+            val v3 = f3().getOrElse { return Err(it) }
+            val v4 = f4().getOrElse { return Err(it) }
+            val v5 = f5().getOrElse { return Err(it) }
+            return combine(v1, v2, v3, v4, v5)
+        }
+    }
+}
 
 inline infix fun <V> Result<V>.onSuccess(action: (V) -> Unit): Result<V> {
     contract {
@@ -185,6 +217,7 @@ inline fun <V> Result<V>.toErrorIf(predicate: (V) -> Boolean, transform: (V) -> 
         } else {
             this
         }
+
         is Err -> this
     }
 }
@@ -200,6 +233,7 @@ inline fun <V> Result<V>.toErrorUnless(predicate: (V) -> Boolean, transform: (V)
         } else {
             this
         }
+
         is Err -> this
     }
 }

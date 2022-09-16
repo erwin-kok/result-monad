@@ -327,4 +327,115 @@ internal class ResultTest {
         ) as Err
         assertSame(firstError, result.error)
     }
+
+    @Test
+    fun `zip of two succeeding actions`() {
+        val value = Result.zip(
+            { sum(1, 3) },
+            { Ok("Hello ") },
+            { a, b -> Ok(b + a) }
+        ).expectNoErrors()
+        assertEquals("Hello 4", value)
+    }
+
+    @Test
+    fun `zip of one succeeding action and an error`() {
+        assertErrorResult("This is an Error") {
+            Result.zip(
+                { sum(1, 3) },
+                { Err("This is an Error") },
+                { _, _ -> Ok("Not reached") }
+            )
+        }
+    }
+
+    @Test
+    fun `zip of two succeeding actions and an error result`() {
+        assertErrorResult("An Error!") {
+            Result.zip(
+                { sum(1, 3) },
+                { sum(2, 4) },
+                { _, _ -> Err("An Error!") }
+            )
+        }
+    }
+
+    @Test
+    fun `zip of three succeeding actions`() {
+        val value = Result.zip(
+            { sum(1, 3) },
+            { Ok("Hello") },
+            { Ok(1.234) },
+            { a, b, c -> Ok("$b $a $c") }
+        ).expectNoErrors()
+        assertEquals("Hello 4 1.234", value)
+    }
+
+    @Test
+    fun `zip of three actions with error`() {
+        assertErrorResult("Oh No!") {
+            Result.zip(
+                { sum(1, 3) },
+                { Ok("Hello") },
+                { Err("Oh No!") },
+                { _, _, _ -> Ok("Not reached") }
+            )
+        }
+    }
+
+    @Test
+    fun `zip of four succeeding actions`() {
+        val value = Result.zip(
+            { sum(1, 3) },
+            { Ok("Hello") },
+            { Ok(1.234) },
+            { Ok("World") },
+            { a, b, c, d -> Ok("$b $a $c $d") }
+        ).expectNoErrors()
+        assertEquals("Hello 4 1.234 World", value)
+    }
+
+    @Test
+    fun `zip of four actions with error`() {
+        assertErrorResult("Oh No!") {
+            Result.zip(
+                { Err("Oh No!") },
+                { sum(1, 3) },
+                { Ok(1.234) },
+                { Ok("Hello") },
+                { _, _, _, _ -> Ok("Not reached") }
+            )
+        }
+    }
+
+    @Test
+    fun `zip of five succeeding actions`() {
+        val value = Result.zip(
+            { sum(1, 3) },
+            { Ok("Hello") },
+            { Ok(1.234) },
+            { sum(5, 7) },
+            { Ok("World") },
+            { a, b, c, d, e -> Ok("$b $e $a $c $d") }
+        ).expectNoErrors()
+        assertEquals("Hello World 4 1.234 12", value)
+    }
+
+    @Test
+    fun `zip of five actions with error`() {
+        assertErrorResult("An Error again!") {
+            Result.zip(
+                { sum(1, 3) },
+                { Ok(1.234) },
+                { Ok("Hello") },
+                { Err("An Error again!") },
+                { Ok("World") },
+                { _, _, _, _, _ -> Ok("Not reached") }
+            )
+        }
+    }
+
+    private fun sum(a: Int, b: Int): Result<Int> {
+        return Ok(a + b)
+    }
 }
