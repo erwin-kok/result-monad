@@ -329,6 +329,35 @@ internal class ResultTest {
     }
 
     @Test
+    fun `run of multiple actions`() {
+        var i = 0
+        Result.run(
+            { i++; Ok(Unit) },
+            { i++; Ok(Unit) },
+            { i++; Ok(Unit) },
+            { i++; Ok(Unit) },
+            { i++; Ok(Unit) }
+        ).expectNoErrors()
+        assertEquals(5, i)
+    }
+
+    @Test
+    fun `run of multiple actions with Error`() {
+        var i = 0
+        assertErrorResult("Error occurred!") {
+            Result.run(
+                { i++; Ok(Unit) },
+                { i++; Ok(Unit) },
+                { i++; Ok(Unit) },
+                { Err("Error occurred!") },
+                { i++; Ok(Unit) },
+                { i++; Ok(Unit) }
+            )
+        }
+        assertEquals(3, i)
+    }
+
+    @Test
     fun `zip of two succeeding actions`() {
         val value = Result.zip(
             { sum(1, 3) },

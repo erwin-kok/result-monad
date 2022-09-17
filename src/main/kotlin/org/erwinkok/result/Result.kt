@@ -8,6 +8,13 @@ import kotlin.contracts.contract
 
 sealed class Result<out V> {
     companion object {
+        fun run(vararg action: () -> Result<Unit>): Result<Unit> {
+            action.forEach {
+                it().onFailure { return Err(it) }
+            }
+            return Ok(Unit)
+        }
+
         fun <A, B, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, combine: (A, B) -> Result<V>): Result<V> {
             val v1 = f1().getOrElse { return Err(it) }
             val v2 = f2().getOrElse { return Err(it) }
