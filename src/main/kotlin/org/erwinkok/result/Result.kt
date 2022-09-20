@@ -8,27 +8,34 @@ import kotlin.contracts.contract
 
 sealed class Result<out V> {
     companion object {
-        fun run(vararg action: () -> Result<Unit>): Result<Unit> {
+        fun run(vararg action: () -> Result<Any>): Result<Unit> {
             action.forEach {
                 it().onFailure { return Err(it) }
             }
             return Ok(Unit)
         }
 
-        fun <A, B, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, combine: (A, B) -> Result<V>): Result<V> {
+        suspend inline fun coRun(vararg action: suspend () -> Result<Any>): Result<Unit> {
+            action.forEach {
+                it().onFailure { return Err(it) }
+            }
+            return Ok(Unit)
+        }
+
+        inline fun <A, B, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, combine: (A, B) -> Result<V>): Result<V> {
             val v1 = f1().getOrElse { return Err(it) }
             val v2 = f2().getOrElse { return Err(it) }
             return combine(v1, v2)
         }
 
-        fun <A, B, C, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, combine: (A, B, C) -> Result<V>): Result<V> {
+        inline fun <A, B, C, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, combine: (A, B, C) -> Result<V>): Result<V> {
             val v1 = f1().getOrElse { return Err(it) }
             val v2 = f2().getOrElse { return Err(it) }
             val v3 = f3().getOrElse { return Err(it) }
             return combine(v1, v2, v3)
         }
 
-        fun <A, B, C, D, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, f4: () -> Result<D>, combine: (A, B, C, D) -> Result<V>): Result<V> {
+        inline fun <A, B, C, D, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, f4: () -> Result<D>, combine: (A, B, C, D) -> Result<V>): Result<V> {
             val v1 = f1().getOrElse { return Err(it) }
             val v2 = f2().getOrElse { return Err(it) }
             val v3 = f3().getOrElse { return Err(it) }
@@ -36,7 +43,7 @@ sealed class Result<out V> {
             return combine(v1, v2, v3, v4)
         }
 
-        fun <A, B, C, D, E, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, f4: () -> Result<D>, f5: () -> Result<E>, combine: (A, B, C, D, E) -> Result<V>): Result<V> {
+        inline fun <A, B, C, D, E, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, f4: () -> Result<D>, f5: () -> Result<E>, combine: (A, B, C, D, E) -> Result<V>): Result<V> {
             val v1 = f1().getOrElse { return Err(it) }
             val v2 = f2().getOrElse { return Err(it) }
             val v3 = f3().getOrElse { return Err(it) }

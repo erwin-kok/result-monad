@@ -1,5 +1,9 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package org.erwinkok.result
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -346,6 +350,22 @@ internal class ResultTest {
         var i = 0
         assertErrorResult("Error occurred!") {
             Result.run(
+                { i++; Ok(Unit) },
+                { i++; Ok(Unit) },
+                { i++; Ok(Unit) },
+                { Err("Error occurred!") },
+                { i++; Ok(Unit) },
+                { i++; Ok(Unit) }
+            )
+        }
+        assertEquals(3, i)
+    }
+
+    @Test
+    fun `coRun of multiple actions with Error`() = runTest {
+        var i = 0
+        coAssertErrorResult("Error occurred!") {
+            Result.coRun(
                 { i++; Ok(Unit) },
                 { i++; Ok(Unit) },
                 { i++; Ok(Unit) },
