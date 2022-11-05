@@ -1,11 +1,11 @@
 [versions]
 kotlinx-coroutines = "1.6.4"
-kotlin-logging = "2.1.23"
-junit-jupiter = "5.9.0"
+kotlin-logging = "3.0.4"
+junit-jupiter = "5.9.1"
 
-kotlin = "1.7.10"
-kover-plugin = "0.6.0"
-ktlint-plugin = "10.3.0"
+kotlin = "1.7.20"
+kover-plugin = "0.6.1"
+ktlint-plugin = "11.0.0"
 nexus-plugin = "1.1.0"
 
 [libraries]

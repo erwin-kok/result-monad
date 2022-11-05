@@ -6,7 +6,7 @@ import org.gradle.api.tasks.testing.logging.TestStackTraceFilter
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.7.20"
     `java-library`
     `java-test-fixtures`
     signing
@@ -22,7 +22,7 @@ repositories {
 }
 
 group = "org.erwinkok.result"
-version = "0.7.0-SNAPSHOT"
+version = "0.8.0-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
