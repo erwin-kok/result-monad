@@ -5,7 +5,7 @@ import org.erwinkok.result.Ok
 import org.erwinkok.result.Result
 import org.erwinkok.result.getOrThrow
 
-internal object Hex {
+object Hex {
     private val hextable = "0123456789abcdef".map { it.code.toByte() }
 
     fun encode(bytes: ByteArray): String {
