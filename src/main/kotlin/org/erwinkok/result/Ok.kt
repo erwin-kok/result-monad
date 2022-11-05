@@ -1,3 +1,4 @@
+// Copyright (c) 2022 Erwin Kok. BSD-3-Clause license. See LICENSE file for more details.
 package org.erwinkok.result
 
 class Ok<V>(val value: V) : Result<V>() {

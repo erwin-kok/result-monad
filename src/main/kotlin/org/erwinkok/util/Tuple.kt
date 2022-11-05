@@ -1,3 +1,4 @@
+// Copyright (c) 2022 Erwin Kok. BSD-3-Clause license. See LICENSE file for more details.
 package org.erwinkok.util
 
 data class Tuple1<out A>(val _1: A)

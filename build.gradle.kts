@@ -1,3 +1,4 @@
+// Copyright (c) 2022 Erwin Kok. BSD-3-Clause license. See LICENSE file for more details.
 @file:Suppress("UnstableApiUsage")
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -22,7 +23,7 @@ repositories {
 }
 
 group = "org.erwinkok.result"
-version = "0.8.0-SNAPSHOT"
+version = "0.9.0-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
