@@ -1,13 +1,14 @@
 // Copyright (c) 2022 Erwin Kok. BSD-3-Clause license. See LICENSE file for more details.
 @file:Suppress("UnstableApiUsage")
 
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.api.tasks.testing.logging.TestStackTraceFilter
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.8.10"
     `java-library`
     `java-test-fixtures`
     signing
@@ -16,6 +17,7 @@ plugins {
     alias(libs.plugins.build.kover)
     alias(libs.plugins.build.ktlint)
     alias(libs.plugins.build.nexus)
+    alias(libs.plugins.build.versions)
 }
 
 repositories {
@@ -23,7 +25,7 @@ repositories {
 }
 
 group = "org.erwinkok.result"
-version = "0.9.0-SNAPSHOT"
+version = "0.10.0-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -93,6 +95,19 @@ tasks {
             maxGranularity = 3
             stackTraceFilters = setOf(TestStackTraceFilter.ENTRY_POINT)
         }
+    }
+}
+
+fun isNonStable(version: String): Boolean {
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+    val isStable = stableKeyword || regex.matches(version)
+    return isStable.not()
+}
+
+tasks.withType<DependencyUpdatesTask> {
+    rejectVersionIf {
+        isNonStable(candidate.version)
     }
 }
 

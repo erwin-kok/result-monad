@@ -1,12 +1,13 @@
 [versions]
 kotlinx-coroutines = "1.6.4"
-kotlin-logging = "3.0.4"
-junit-jupiter = "5.9.1"
+kotlin-logging = "3.0.5"
+junit-jupiter = "5.9.2"
 
-kotlin = "1.7.20"
+kotlin = "1.8.10"
 kover-plugin = "0.6.1"
-ktlint-plugin = "11.0.0"
+ktlint-plugin = "11.2.0"
 nexus-plugin = "1.1.0"
+versions-plugin = "0.45.0"
 
 [libraries]
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
@@ -22,3 +23,4 @@ build-kotlin = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref =
 build-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover-plugin" }
 build-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-plugin" }
 build-nexus = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-plugin" }
+build-versions = { id = "com.github.ben-manes.versions", version.ref = "versions-plugin" }
