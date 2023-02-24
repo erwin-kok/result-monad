@@ -30,6 +30,8 @@ version = "1.0.0"
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+    withSourcesJar()
+    withJavadocJar()
 }
 
 dependencies {
@@ -127,6 +129,7 @@ publishing {
             from(components["java"])
             pom {
                 name.set(project.name)
+                description.set("Result monad for modelling success or failure results.")
                 inceptionYear.set("2022")
                 url.set("https://github.com/erwin-kok/result-monad")
                 licenses {
