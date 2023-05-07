@@ -25,7 +25,7 @@ repositories {
 }
 
 group = "org.erwinkok.result"
-version = "1.0.0"
+version = "1.0.2-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -98,6 +98,12 @@ tasks {
             stackTraceFilters = setOf(TestStackTraceFilter.ENTRY_POINT)
         }
     }
+
+    withType<DependencyUpdatesTask> {
+        rejectVersionIf {
+            isNonStable(candidate.version)
+        }
+    }
 }
 
 fun isNonStable(version: String): Boolean {
@@ -105,12 +111,6 @@ fun isNonStable(version: String): Boolean {
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
     val isStable = stableKeyword || regex.matches(version)
     return isStable.not()
-}
-
-tasks.withType<DependencyUpdatesTask> {
-    rejectVersionIf {
-        isNonStable(candidate.version)
-    }
 }
 
 kover {
