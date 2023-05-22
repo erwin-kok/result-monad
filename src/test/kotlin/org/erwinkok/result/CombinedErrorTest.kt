@@ -51,4 +51,22 @@ internal class CombinedErrorTest {
             combinedError.error().message
         )
     }
+
+    @Test
+    fun `custom error message`() {
+        val combinedError = CombinedError(3)
+        combinedError.recordError(Error("Error 1 message"))
+        combinedError.recordError(Error("Error 2 message"))
+        combinedError.recordError { "Error 3 message" }
+        combinedError.recordError { "Error 4 message" }
+        assertTrue(combinedError.hasErrors)
+        assertEquals(
+            "While doing the dishes, the following things happened: \n" +
+                "  * Error 1 message\n" +
+                "  * Error 2 message\n" +
+                "  * Error 3 message\n" +
+                "    ... skipping 1 errors ...",
+            combinedError.error("While doing the dishes, the following things happened: ").message
+        )
+    }
 }

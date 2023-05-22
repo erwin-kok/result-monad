@@ -267,3 +267,33 @@ fun <V> Iterable<Result<V>>.combine(): Result<List<V>> {
         }
     )
 }
+
+inline infix fun <U> Result<U>.mapError(transform: (Error) -> U): Result<U> {
+    return when (this) {
+        is Ok -> this
+        is Err -> Ok(transform(error))
+    }
+}
+
+inline infix fun <U> Result<U>.flatMapError(transform: (Error) -> Result<U>): Result<U> {
+    return when (this) {
+        is Ok -> this
+        is Err -> transform(error)
+    }
+}
+
+inline fun <U> Result<U>.mapIfError(check: Error, transform: (Error) -> U): Result<U> {
+    return if (this is Err && error == check) {
+        Ok(transform(error))
+    } else {
+        this
+    }
+}
+
+inline fun <U> Result<U>.flatMapIfError(check: Error, transform: (Error) -> Result<U>): Result<U> {
+    return if (this is Err && error == check) {
+        transform(error)
+    } else {
+        this
+    }
+}

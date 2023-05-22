@@ -334,6 +334,56 @@ internal class ResultTest {
     }
 
     @Test
+    fun `returns value when mapped error occurred`() {
+        val firstError = Error("Some error")
+        val result = Err(firstError)
+            .mapError { "All Ok" } as Ok
+        assertSame("All Ok", result.value)
+    }
+
+    @Test
+    fun `returns value when flat mapped error occurred`() {
+        val firstError = Error("Some error")
+        val result = Err(firstError)
+            .flatMapError { Ok("No Error luckily") } as Ok
+        assertSame("No Error luckily", result.value)
+    }
+
+    @Test
+    fun `mapIfError returns value when allowed error occurs`() {
+        val firstError = Error("Some error")
+        val result = Err(firstError)
+            .mapIfError(firstError) { "All Ok" } as Ok
+        assertSame("All Ok", result.value)
+    }
+
+    @Test
+    fun `mapIfError returns err when not allowed error occurs`() {
+        val notAllowed = Error("Not allowed error")
+        val firstError = Error("Some error")
+        val result = Err(notAllowed)
+            .mapIfError(firstError) { "All Ok" } as Err
+        assertSame(notAllowed, result.error)
+    }
+
+    @Test
+    fun `flatMapIfError returns value when allowed error occurs`() {
+        val firstError = Error("Some error")
+        val result = Err(firstError)
+            .flatMapIfError(firstError) { Ok("All Ok") } as Ok
+        assertSame("All Ok", result.value)
+    }
+
+    @Test
+    fun `flatMapIfError returns err when not allowed error occurs`() {
+        val notAllowed = Error("Not allowed error")
+        val firstError = Error("Some error")
+        val result = Err(notAllowed)
+            .flatMapIfError(firstError) { Ok("All Ok") } as Err
+        assertSame(notAllowed, result.error)
+    }
+
+    @Test
     fun `run of multiple actions`() {
         var i = 0
         Result.run(

@@ -20,9 +20,13 @@ class CombinedError(private val maxErrors: Int = 16) {
         errors.add(error)
     }
 
-    fun error(): Error {
+    fun error(msg: String? = null): Error {
         val sb = StringBuilder()
-        sb.append("The following errors occurred: ")
+        if (msg != null) {
+            sb.append(msg)
+        } else {
+            sb.append("The following errors occurred: ")
+        }
         for (error in errors) {
             sb.append("\n  * ${error.message}")
         }
