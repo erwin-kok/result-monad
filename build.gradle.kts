@@ -85,14 +85,17 @@ fun isNonStable(version: String): Boolean {
     return isStable.not()
 }
 
-kover {
-    htmlReport {
-        onCheck.set(true)
+koverReport {
+    defaults {
+        filters {
+            excludes {
+                classes(
+                    "org.erwinkok.multiformat.multicodec.Codec",
+                    "org.erwinkok.multiformat.multicodec.GenerateKt*"
+                )
+            }
+        }
     }
-}
-
-koverMerged {
-    enable()
 }
 
 publishing {
