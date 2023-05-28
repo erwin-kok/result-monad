@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "1.8.21"
     `java-library`
     `java-test-fixtures`
     signing
@@ -67,26 +67,14 @@ tasks {
         targetCompatibility = JavaVersion.VERSION_17.toString()
     }
 
-    compileTestFixturesKotlin {
-        println("Configuring KotlinTestFixturesCompile $name in project ${project.name}...")
-        kotlinOptions {
-            @Suppress("SpellCheckingInspection")
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            allWarningsAsErrors = true
-            jvmTarget = "17"
-            languageVersion = "1.7"
-            apiVersion = "1.7"
+    withType<DependencyUpdatesTask> {
+        rejectVersionIf {
+            isNonStable(candidate.version)
         }
     }
 
     test {
         useJUnitPlatform()
-    }
-
-    withType<DependencyUpdatesTask> {
-        rejectVersionIf {
-            isNonStable(candidate.version)
-        }
     }
 }
 
