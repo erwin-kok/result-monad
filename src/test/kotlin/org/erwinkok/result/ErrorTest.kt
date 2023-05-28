@@ -4,6 +4,7 @@ package org.erwinkok.result
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -107,4 +108,15 @@ internal class ErrorTest {
         assertTrue(stackTrace.contains(methodName))
         assertFalse(stackTrace.contains("Caused by:"))
     }
+
+    @Test
+    fun `can extend Error`() {
+        val error: Error = ExtendedError("An extended error", "some info")
+        assertErrorResult("An extended error") { Err(error) }
+        val extendedError = error as? ExtendedError
+        assertNotNull(extendedError)
+        assertEquals("some info", extendedError?.extended)
+    }
+
+    class ExtendedError(message: String, val extended: String) : Error(message)
 }

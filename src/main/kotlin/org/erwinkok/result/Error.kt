@@ -3,7 +3,7 @@ package org.erwinkok.result
 
 import java.util.stream.Collectors
 
-data class Error(override val message: String) : Exception(message) {
+open class Error(override val message: String) : Exception(message) {
     constructor(t: Throwable) : this("${errorMessage(t)} <${t.javaClass.name}>") {
         this.throwable = t
     }

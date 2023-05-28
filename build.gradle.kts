@@ -1,10 +1,10 @@
 // Copyright (c) 2022 Erwin Kok. BSD-3-Clause license. See LICENSE file for more details.
 @file:Suppress("UnstableApiUsage")
 
+import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.gradle.api.tasks.testing.logging.TestStackTraceFilter
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.build.ktlint)
     alias(libs.plugins.build.nexus)
     alias(libs.plugins.build.versions)
+    alias(libs.plugins.build.testlogger)
 }
 
 repositories {
@@ -25,7 +26,7 @@ repositories {
 }
 
 group = "org.erwinkok.result"
-version = "1.1.0-SNAPSHOT"
+version = "1.2.0-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -50,29 +51,20 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
+testlogger {
+    theme = ThemeType.MOCHA
+}
+
 tasks {
-    compileKotlin {
-        println("Configuring KotlinCompile $name in project ${project.name}...")
-        kotlinOptions {
-            @Suppress("SpellCheckingInspection")
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            allWarningsAsErrors = true
-            jvmTarget = "11"
-            languageVersion = "1.7"
-            apiVersion = "1.7"
+    withType<KotlinCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
-    compileTestKotlin {
-        println("Configuring KotlinTestCompile $name in project ${project.name}...")
-        kotlinOptions {
-            @Suppress("SpellCheckingInspection")
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            allWarningsAsErrors = true
-            jvmTarget = "11"
-            languageVersion = "1.7"
-            apiVersion = "1.7"
-        }
+    withType<JavaCompile>().configureEach {
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
     }
 
     compileTestFixturesKotlin {
@@ -81,7 +73,7 @@ tasks {
             @Suppress("SpellCheckingInspection")
             freeCompilerArgs = listOf("-Xjsr305=strict")
             allWarningsAsErrors = true
-            jvmTarget = "11"
+            jvmTarget = "17"
             languageVersion = "1.7"
             apiVersion = "1.7"
         }
@@ -89,14 +81,6 @@ tasks {
 
     test {
         useJUnitPlatform()
-        testLogging {
-            events = setOf(TestLogEvent.PASSED, TestLogEvent.FAILED)
-            exceptionFormat = TestExceptionFormat.FULL
-            showExceptions = true
-            showCauses = true
-            maxGranularity = 3
-            stackTraceFilters = setOf(TestStackTraceFilter.ENTRY_POINT)
-        }
     }
 
     withType<DependencyUpdatesTask> {
