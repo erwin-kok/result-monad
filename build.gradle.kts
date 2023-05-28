@@ -3,6 +3,9 @@
 
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import kotlinx.kover.gradle.plugin.dsl.AggregationType
+import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
+import kotlinx.kover.gradle.plugin.dsl.MetricType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -84,13 +87,20 @@ fun isNonStable(version: String): Boolean {
 }
 
 koverReport {
-    defaults {
-        filters {
-            excludes {
-                classes(
-                    "org.erwinkok.multiformat.multicodec.Codec",
-                    "org.erwinkok.multiformat.multicodec.GenerateKt*"
-                )
+    html {
+        onCheck = true
+    }
+
+    verify {
+        onCheck = true
+        rule {
+            isEnabled = true
+            entity = kotlinx.kover.gradle.plugin.dsl.GroupingEntityType.APPLICATION
+            bound {
+                minValue = 0
+                maxValue = 99
+                metric = kotlinx.kover.gradle.plugin.dsl.MetricType.LINE
+                aggregation = kotlinx.kover.gradle.plugin.dsl.AggregationType.COVERED_PERCENTAGE
             }
         }
     }
