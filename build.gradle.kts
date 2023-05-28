@@ -26,11 +26,9 @@ repositories {
 }
 
 group = "org.erwinkok.result"
-version = "1.2.0-SNAPSHOT"
+version = "1.2.0"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
     withSourcesJar()
     withJavadocJar()
 }
