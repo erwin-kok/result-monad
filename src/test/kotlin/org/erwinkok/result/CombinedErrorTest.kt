@@ -30,7 +30,7 @@ internal class CombinedErrorTest {
             "The following errors occurred: \n" +
                 "  * Error 1 message\n" +
                 "  * Error 2 message",
-            combinedError.error().message
+            combinedError.error().message,
         )
     }
 
@@ -48,7 +48,7 @@ internal class CombinedErrorTest {
                 "  * Error 2 message\n" +
                 "  * Error 3 message\n" +
                 "    ... skipping 1 errors ...",
-            combinedError.error().message
+            combinedError.error().message,
         )
     }
 
@@ -66,7 +66,7 @@ internal class CombinedErrorTest {
                 "  * Error 2 message\n" +
                 "  * Error 3 message\n" +
                 "    ... skipping 1 errors ...",
-            combinedError.error("While doing the dishes, the following things happened: ").message
+            combinedError.error("While doing the dishes, the following things happened: ").message,
         )
     }
 }

@@ -33,7 +33,7 @@ internal class CombinedResultTest {
         assertErrorResult(
             "The following errors occurred: \n" +
                 "  * Error 1 message\n" +
-                "  * Error 2 message"
+                "  * Error 2 message",
         ) {
             combinedResult.result()
         }
@@ -52,7 +52,7 @@ internal class CombinedResultTest {
                 "  * Error 1 message\n" +
                 "  * Error 2 message\n" +
                 "  * Error 3 message\n" +
-                "    ... skipping 1 errors ..."
+                "    ... skipping 1 errors ...",
         ) {
             combinedResult.result()
         }
@@ -77,7 +77,7 @@ internal class CombinedResultTest {
         assertTrue(combinedResult.hasErrors)
         assertErrorResult(
             "The following errors occurred: \n" +
-                "  * AnError"
+                "  * AnError",
         ) {
             combinedResult.result()
         }
@@ -92,7 +92,7 @@ internal class CombinedResultTest {
         assertTrue(combinedResult.hasErrors)
         assertErrorResult(
             "The following errors occurred: \n" +
-                "  * AnError"
+                "  * AnError",
         ) {
             combinedResult.result()
         }

@@ -195,7 +195,7 @@ internal class ResultTest {
     fun `return transformed value when mapBoth for ok`() {
         val value = Ok("hello").mapBoth(
             success = { "$it world" },
-            failure = { "$it universe" }
+            failure = { "$it universe" },
         )
         assertEquals("hello world", value)
     }
@@ -205,7 +205,7 @@ internal class ResultTest {
     fun `return transformed value when mapBoth for err`() {
         val error = Err("hello").mapBoth(
             success = { "$it world" },
-            failure = { "$it universe" }
+            failure = { "$it universe" },
         )
         assertEquals("hello universe", error)
     }
@@ -214,7 +214,7 @@ internal class ResultTest {
     fun `return transformed value when mapEither for ok`() {
         val result = Ok(100).mapEither(
             success = { it + 200 },
-            failure = { Error("$it") }
+            failure = { Error("$it") },
         ) as Ok
         assertEquals(300, result.value)
     }
@@ -224,7 +224,7 @@ internal class ResultTest {
     fun `return transformed value when mapEither for err`() {
         val result = Err("hello").mapEither(
             success = { "$it world" },
-            failure = { Error("$it universe") }
+            failure = { Error("$it universe") },
         ) as Err
         assertEquals(Error("hello universe"), result.error)
     }
@@ -233,7 +233,7 @@ internal class ResultTest {
     fun `return error when toErrorIf for ok and predicate is true`() {
         val result = Ok("hello").toErrorIf(
             predicate = { true },
-            transform = { Error("$it world") }
+            transform = { Error("$it world") },
         ) as Err
         assertEquals(Error("hello world"), result.error)
     }
@@ -242,7 +242,7 @@ internal class ResultTest {
     fun `return value when toErrorIf for ok and predicate is false`() {
         val result = Ok("hello").toErrorIf(
             predicate = { false },
-            transform = { Error("$it world") }
+            transform = { Error("$it world") },
         ) as Ok
         assertEquals("hello", result.value)
     }
@@ -252,7 +252,7 @@ internal class ResultTest {
     fun `return first err when toErrorIf for err and predicate is true`() {
         val result = Err("first").toErrorIf(
             predicate = { true },
-            transform = { Error("$it world") }
+            transform = { Error("$it world") },
         ) as Err
         assertEquals(Error("first"), result.error)
     }
@@ -262,7 +262,7 @@ internal class ResultTest {
     fun `return first err when toErrorIf for err and predicate is false`() {
         val result = Err("first").toErrorIf(
             predicate = { false },
-            transform = { Error("$it world") }
+            transform = { Error("$it world") },
         ) as Err
         assertEquals(Error("first"), result.error)
     }
@@ -271,7 +271,7 @@ internal class ResultTest {
     fun `return error when toErrorUnless for ok and predicate is false`() {
         val result = Ok("hello").toErrorUnless(
             predicate = { false },
-            transform = { Error("$it world") }
+            transform = { Error("$it world") },
         ) as Err
         assertEquals(Error("hello world"), result.error)
     }
@@ -280,7 +280,7 @@ internal class ResultTest {
     fun `return value when toErrorUnless for ok and predicate is true`() {
         val result = Ok("hello").toErrorUnless(
             predicate = { true },
-            transform = { Error("$it world") }
+            transform = { Error("$it world") },
         ) as Ok
         assertEquals("hello", result.value)
     }
@@ -290,7 +290,7 @@ internal class ResultTest {
     fun `return first err when toErrorUnless for err and predicate is true`() {
         val result = Err("first").toErrorUnless(
             predicate = { true },
-            transform = { Error("$it world") }
+            transform = { Error("$it world") },
         ) as Err
         assertEquals(Error("first"), result.error)
     }
@@ -300,7 +300,7 @@ internal class ResultTest {
     fun `return first err when toErrorUnless for err and predicate is false`() {
         val result = Err("first").toErrorUnless(
             predicate = { false },
-            transform = { Error("$it world") }
+            transform = { Error("$it world") },
         ) as Err
         assertEquals(Error("first"), result.error)
     }
@@ -310,7 +310,7 @@ internal class ResultTest {
         val values = combine(
             Ok(10),
             Ok(20),
-            Ok(30)
+            Ok(30),
         ).get()!!
         assertEquals(3, values.size)
         assertEquals(10, values[0])
@@ -328,7 +328,7 @@ internal class ResultTest {
             Err(firstError),
             Ok(60),
             Err(secondError),
-            Ok(80)
+            Ok(80),
         ) as Err
         assertSame(firstError, result.error)
     }
@@ -391,7 +391,7 @@ internal class ResultTest {
             { i++; Ok(Unit) },
             { i++; Ok(Unit) },
             { i++; Ok(Unit) },
-            { i++; Ok(Unit) }
+            { i++; Ok(Unit) },
         ).expectNoErrors()
         assertEquals(5, i)
     }
@@ -406,7 +406,7 @@ internal class ResultTest {
                 { i++; Ok(Unit) },
                 { Err("Error occurred!") },
                 { i++; Ok(Unit) },
-                { i++; Ok(Unit) }
+                { i++; Ok(Unit) },
             )
         }
         assertEquals(3, i)
@@ -422,7 +422,7 @@ internal class ResultTest {
                 { i++; Ok(Unit) },
                 { Err("Error occurred!") },
                 { i++; Ok(Unit) },
-                { i++; Ok(Unit) }
+                { i++; Ok(Unit) },
             )
         }
         assertEquals(3, i)
@@ -433,7 +433,7 @@ internal class ResultTest {
         val value = Result.zip(
             { sum(1, 3) },
             { Ok("Hello ") },
-            { a, b -> Ok(b + a) }
+            { a, b -> Ok(b + a) },
         ).expectNoErrors()
         assertEquals("Hello 4", value)
     }
@@ -444,7 +444,7 @@ internal class ResultTest {
             Result.zip(
                 { sum(1, 3) },
                 { Err("This is an Error") },
-                { _, _ -> Ok("Not reached") }
+                { _, _ -> Ok("Not reached") },
             )
         }
     }
@@ -455,7 +455,7 @@ internal class ResultTest {
             Result.zip(
                 { sum(1, 3) },
                 { sum(2, 4) },
-                { _, _ -> Err("An Error!") }
+                { _, _ -> Err("An Error!") },
             )
         }
     }
@@ -466,7 +466,7 @@ internal class ResultTest {
             { sum(1, 3) },
             { Ok("Hello") },
             { Ok(1.234) },
-            { a, b, c -> Ok("$b $a $c") }
+            { a, b, c -> Ok("$b $a $c") },
         ).expectNoErrors()
         assertEquals("Hello 4 1.234", value)
     }
@@ -478,7 +478,7 @@ internal class ResultTest {
                 { sum(1, 3) },
                 { Ok("Hello") },
                 { Err("Oh No!") },
-                { _, _, _ -> Ok("Not reached") }
+                { _, _, _ -> Ok("Not reached") },
             )
         }
     }
@@ -490,7 +490,7 @@ internal class ResultTest {
             { Ok("Hello") },
             { Ok(1.234) },
             { Ok("World") },
-            { a, b, c, d -> Ok("$b $a $c $d") }
+            { a, b, c, d -> Ok("$b $a $c $d") },
         ).expectNoErrors()
         assertEquals("Hello 4 1.234 World", value)
     }
@@ -503,7 +503,7 @@ internal class ResultTest {
                 { sum(1, 3) },
                 { Ok(1.234) },
                 { Ok("Hello") },
-                { _, _, _, _ -> Ok("Not reached") }
+                { _, _, _, _ -> Ok("Not reached") },
             )
         }
     }
@@ -516,7 +516,7 @@ internal class ResultTest {
             { Ok(1.234) },
             { sum(5, 7) },
             { Ok("World") },
-            { a, b, c, d, e -> Ok("$b $e $a $c $d") }
+            { a, b, c, d, e -> Ok("$b $e $a $c $d") },
         ).expectNoErrors()
         assertEquals("Hello World 4 1.234 12", value)
     }
@@ -530,7 +530,7 @@ internal class ResultTest {
                 { Ok("Hello") },
                 { Err("An Error again!") },
                 { Ok("World") },
-                { _, _, _, _, _ -> Ok("Not reached") }
+                { _, _, _, _, _ -> Ok("Not reached") },
             )
         }
     }

@@ -3,15 +3,12 @@
 
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import kotlinx.kover.gradle.plugin.dsl.AggregationType
-import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
-import kotlinx.kover.gradle.plugin.dsl.MetricType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    kotlin("jvm") version "1.8.21"
+    kotlin("jvm") version "1.8.22"
     `java-library`
     `java-test-fixtures`
     signing
@@ -29,7 +26,7 @@ repositories {
 }
 
 group = "org.erwinkok.result"
-version = "1.2.0"
+version = "1.3.0"
 
 java {
     withSourcesJar()
@@ -37,10 +34,11 @@ java {
 }
 
 dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(platform(kotlin("bom")))
+    implementation(kotlin("stdlib"))
 
     implementation(libs.kotlin.logging)
+    implementation(libs.slf4j.api)
 
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit.jupiter.api)
@@ -87,20 +85,22 @@ fun isNonStable(version: String): Boolean {
 }
 
 koverReport {
-    html {
-        onCheck = true
-    }
+    defaults {
+        html {
+            onCheck = true
+        }
 
-    verify {
-        onCheck = true
-        rule {
-            isEnabled = true
-            entity = kotlinx.kover.gradle.plugin.dsl.GroupingEntityType.APPLICATION
-            bound {
-                minValue = 0
-                maxValue = 99
-                metric = kotlinx.kover.gradle.plugin.dsl.MetricType.LINE
-                aggregation = kotlinx.kover.gradle.plugin.dsl.AggregationType.COVERED_PERCENTAGE
+        verify {
+            onCheck = true
+            rule {
+                isEnabled = true
+                entity = kotlinx.kover.gradle.plugin.dsl.GroupingEntityType.APPLICATION
+                bound {
+                    minValue = 0
+                    maxValue = 99
+                    metric = kotlinx.kover.gradle.plugin.dsl.MetricType.LINE
+                    aggregation = kotlinx.kover.gradle.plugin.dsl.AggregationType.COVERED_PERCENTAGE
+                }
             }
         }
     }
@@ -123,8 +123,11 @@ publishing {
                 }
                 developers {
                     developer {
+                        id.set("erwin-kok")
                         name.set("Erwin Kok")
+                        email.set("github@erwinkok.org")
                         url.set("https://github.com/erwin-kok/")
+                        roles.set(listOf("owner", "developer"))
                     }
                 }
                 scm {

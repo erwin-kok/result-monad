@@ -264,7 +264,7 @@ fun <V> Iterable<Result<V>>.combine(): Result<List<V>> {
                 is Ok -> it.value
                 is Err -> return it
             }
-        }
+        },
     )
 }
 
