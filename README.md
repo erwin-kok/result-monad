@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/erwin-kok/result-monad/actions/workflows/ci.yaml/badge.svg)](https://github.com/erwin-kok/result-monad/actions/workflows/ci.yaml)
 [![Maven Central](https://img.shields.io/maven-central/v/org.erwinkok.result/result-monad)](https://central.sonatype.com/artifact/org.erwinkok.result/result-monad)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.8.22-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.9.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![License](https://img.shields.io/github/license/erwin-kok/result-monad.svg)](https://github.com/erwin-kok/result-monad/blob/master/LICENSE)
 
 ## Usage 
@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.erwinkok.result:result-monad:1.3.0")
+    implementation("org.erwinkok.result:result-monad:$latest")
 }
 ```
 

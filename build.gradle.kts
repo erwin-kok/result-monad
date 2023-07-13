@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.9.0"
     `java-library`
     `java-test-fixtures`
     signing
@@ -26,7 +26,7 @@ repositories {
 }
 
 group = "org.erwinkok.result"
-version = "1.3.1"
+version = "1.4.0"
 
 java {
     withSourcesJar()
