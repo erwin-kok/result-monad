@@ -52,6 +52,31 @@ sealed class Result<out V> {
             val v5 = f5().getOrElse { return Err(it) }
             return combine(v1, v2, v3, v4, v5)
         }
+
+        inline fun <A, B, C, D, E, F, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, f4: () -> Result<D>, f5: () -> Result<E>, f6: () -> Result<F>, combine: (A, B, C, D, E, F) -> Result<V>): Result<V> {
+            val v1 = f1().getOrElse { return Err(it) }
+            val v2 = f2().getOrElse { return Err(it) }
+            val v3 = f3().getOrElse { return Err(it) }
+            val v4 = f4().getOrElse { return Err(it) }
+            val v5 = f5().getOrElse { return Err(it) }
+            val v6 = f6().getOrElse { return Err(it) }
+            return combine(v1, v2, v3, v4, v5, v6)
+        }
+
+        inline fun <A, B, C, D, E, F, G, V> zip(f1: () -> Result<A>, f2: () -> Result<B>, f3: () -> Result<C>, f4: () -> Result<D>, f5: () -> Result<E>, f6: () -> Result<F>, f7: () -> Result<G>, combine: (A, B, C, D, E, F, G) -> Result<V>): Result<V> {
+            val v1 = f1().getOrElse { return Err(it) }
+            val v2 = f2().getOrElse { return Err(it) }
+            val v3 = f3().getOrElse { return Err(it) }
+            val v4 = f4().getOrElse { return Err(it) }
+            val v5 = f5().getOrElse { return Err(it) }
+            val v6 = f6().getOrElse { return Err(it) }
+            val v7 = f7().getOrElse { return Err(it) }
+            return combine(v1, v2, v3, v4, v5, v6, v7)
+        }
+
+        fun <V> combine(vararg results: Result<V>): Result<List<V>> {
+            return results.asIterable().combine()
+        }
     }
 }
 
@@ -251,10 +276,6 @@ inline fun <V> Result<V>.toErrorUnless(predicate: (V) -> Boolean, transform: (V)
 
         is Err -> this
     }
-}
-
-fun <V> combine(vararg results: Result<V>): Result<List<V>> {
-    return results.asIterable().combine()
 }
 
 fun <V> Iterable<Result<V>>.combine(): Result<List<V>> {

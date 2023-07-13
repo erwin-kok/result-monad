@@ -307,7 +307,7 @@ internal class ResultTest {
 
     @Test
     fun `returns all values when ok`() {
-        val values = combine(
+        val values = Result.combine(
             Ok(10),
             Ok(20),
             Ok(30),
@@ -322,7 +322,7 @@ internal class ResultTest {
     fun `return first error when err`() {
         val firstError = Error("First")
         val secondError = Error("second")
-        val result = combine(
+        val result = Result.combine(
             Ok(20),
             Ok(40),
             Err(firstError),
@@ -531,6 +531,66 @@ internal class ResultTest {
                 { Err("An Error again!") },
                 { Ok("World") },
                 { _, _, _, _, _ -> Ok("Not reached") },
+            )
+        }
+    }
+
+    @Test
+    fun `zip of six succeeding actions`() {
+        val value = Result.zip(
+            { sum(1, 3) },
+            { Ok("Hello") },
+            { Ok(1.234) },
+            { sum(5, 7) },
+            { Ok("World") },
+            { Ok(321) },
+            { a, b, c, d, e, f -> Ok("$b $e $a $c $d $f") },
+        ).expectNoErrors()
+        assertEquals("Hello World 4 1.234 12 321", value)
+    }
+
+    @Test
+    fun `zip of six actions with error`() {
+        assertErrorResult("An Error again!") {
+            Result.zip(
+                { sum(1, 3) },
+                { Ok(1.234) },
+                { Ok("Hello") },
+                { Err("An Error again!") },
+                { Ok("World") },
+                { Ok(321) },
+                { _, _, _, _, _, _ -> Ok("Not reached") },
+            )
+        }
+    }
+
+    @Test
+    fun `zip of seven succeeding actions`() {
+        val value = Result.zip(
+            { sum(1, 3) },
+            { Ok("Hello") },
+            { Ok(1.234) },
+            { sum(5, 7) },
+            { Ok("World") },
+            { Ok(321) },
+            { Ok("Something") },
+            { a, b, c, d, e, f, g -> Ok("$g, $b $e $a $c $d $f") },
+        ).expectNoErrors()
+        assertEquals("Something, Hello World 4 1.234 12 321", value)
+    }
+
+    @Test
+    fun `zip of seven actions with error`() {
+        assertErrorResult("An Error again!") {
+            Result.zip(
+                { sum(1, 3) },
+                { Ok(1.234) },
+                { Ok("Hello") },
+                { Err("An Error again!") },
+                { Ok("World") },
+                { Ok(321) },
+                { Ok("Something") },
+                { _, _, _, _, _, _, _ -> Ok("Not reached") },
             )
         }
     }
