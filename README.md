@@ -179,7 +179,7 @@ Bug reports and pull requests are welcome on [GitHub](https://github.com/erwin-k
 
 ## Contact
 
-If you want to contact me, please write an e-mail to: [github@erwinkok.org](mailto:github@erwinkok.org)
+If you want to contact me, please write an e-mail to: [erwin-kok@gmx.com](mailto:erwin-kok@gmx.com)
 
 ## License
 
