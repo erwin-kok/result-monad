@@ -3,7 +3,7 @@ package org.erwinkok.result
 
 import java.util.stream.Collectors
 
-open class Error(override val message: String) : Exception(message) {
+open class Error(private val msg: String? = null) : Exception(msg) {
     constructor(t: Throwable) : this("${errorMessage(t)} <${t.javaClass.name}>") {
         this.throwable = t
     }
@@ -14,6 +14,9 @@ open class Error(override val message: String) : Exception(message) {
 
     private var throwable: Throwable? = null
     private val frames = saveStackFrames(2)
+
+    override val message: String
+        get() = msg ?: "(unspecified error)"
 
     fun stackTrace(): String {
         val sb = StringBuilder()
@@ -46,4 +49,6 @@ open class Error(override val message: String) : Exception(message) {
     private fun saveStackFrames(skip: Long) = StackWalker.getInstance(StackWalker.Option.SHOW_HIDDEN_FRAMES).walk { i -> i.skip(skip).collect(Collectors.toList()) }
 }
 
-fun errorMessage(it: Throwable) = it.message ?: "<unknown>"
+fun errorMessage(it: Throwable) = it.message ?: "(unknown throwable message)"
+
+fun errorMessage(it: Error) = it.message

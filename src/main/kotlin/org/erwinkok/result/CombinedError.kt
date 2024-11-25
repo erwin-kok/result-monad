@@ -1,8 +1,7 @@
 // Copyright (c) 2023 Erwin Kok. BSD-3-Clause license. See LICENSE file for more details.
 package org.erwinkok.result
 
-class CombinedError(private val maxErrors: Int = 16) {
-    private val errors = mutableListOf<Error>()
+class CombinedError(private val errors: MutableList<Error> = mutableListOf(), private val maxErrors: Int = 16) {
     private var skipped: Int = 0
 
     val hasErrors: Boolean

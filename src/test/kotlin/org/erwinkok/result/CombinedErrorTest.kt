@@ -36,7 +36,7 @@ internal class CombinedErrorTest {
 
     @Test
     fun `skips errors`() {
-        val combinedError = CombinedError(3)
+        val combinedError = CombinedError(maxErrors = 3)
         combinedError.recordError(Error("Error 1 message"))
         combinedError.recordError(Error("Error 2 message"))
         combinedError.recordError { "Error 3 message" }
@@ -54,7 +54,7 @@ internal class CombinedErrorTest {
 
     @Test
     fun `custom error message`() {
-        val combinedError = CombinedError(3)
+        val combinedError = CombinedError(maxErrors = 3)
         combinedError.recordError(Error("Error 1 message"))
         combinedError.recordError(Error("Error 2 message"))
         combinedError.recordError { "Error 3 message" }

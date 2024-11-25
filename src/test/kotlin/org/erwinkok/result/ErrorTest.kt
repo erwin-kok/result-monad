@@ -29,7 +29,7 @@ internal class ErrorTest {
 
     @Test
     fun `errors should be unknown for string and empty throwable`() {
-        assertEquals(Error("<unknown> <java.lang.IllegalArgumentException>"), Error(IllegalArgumentException()))
+        assertEquals(Error("(unknown throwable message) <java.lang.IllegalArgumentException>"), Error(IllegalArgumentException()))
     }
 
     @Test
@@ -76,7 +76,7 @@ internal class ErrorTest {
 
     @Test
     fun `errorMessage is unknown for empty throwable`() {
-        assertEquals("<unknown>", errorMessage(IllegalArgumentException()))
+        assertEquals("(unknown throwable message)", errorMessage(IllegalArgumentException()))
     }
 
     @Test
@@ -86,6 +86,11 @@ internal class ErrorTest {
         assertTrue(stackTrace.contains("Error occurred: Oh No!"))
         assertTrue(stackTrace.contains(methodName))
         assertFalse(stackTrace.contains("Caused by:"))
+    }
+
+    @Test
+    fun `unspecified Error`() {
+        assertEquals("(unspecified error)", errorMessage(Error()))
     }
 
     @Test
@@ -112,11 +117,14 @@ internal class ErrorTest {
     @Test
     fun `can extend Error`() {
         val error: Error = ExtendedError("An extended error", "some info")
-        assertErrorResult("An extended error") { Err(error) }
+        assertErrorResult("Something went wrong: An extended error (some info)") { Err(error) }
         val extendedError = error as? ExtendedError
         assertNotNull(extendedError)
         assertEquals("some info", extendedError?.extended)
     }
 
-    class ExtendedError(message: String, val extended: String) : Error(message)
+    class ExtendedError(val msg: String, val extended: String) : Error() {
+        override val message: String
+            get() = "Something went wrong: $msg ($extended)"
+    }
 }
