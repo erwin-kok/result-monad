@@ -384,6 +384,7 @@ internal class ResultTest {
     }
 
     @Test
+    @Suppress("ktlint:standard:statement-wrapping")
     fun `run of multiple actions`() {
         var i = 0
         Result.run(
@@ -397,6 +398,7 @@ internal class ResultTest {
     }
 
     @Test
+    @Suppress("ktlint:standard:statement-wrapping")
     fun `run of multiple actions with Error`() {
         var i = 0
         assertErrorResult("Error occurred!") {
@@ -413,6 +415,7 @@ internal class ResultTest {
     }
 
     @Test
+    @Suppress("ktlint:standard:statement-wrapping")
     fun `coRun of multiple actions with Error`() = runTest {
         var i = 0
         coAssertErrorResult("Error occurred!") {

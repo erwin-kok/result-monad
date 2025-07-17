@@ -3,12 +3,9 @@
 
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "2.2.0"
     `java-library`
     `java-test-fixtures`
     signing
@@ -48,32 +45,26 @@ dependencies {
     testFixturesImplementation(libs.junit.jupiter.params)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 testlogger {
     theme = ThemeType.MOCHA
 }
 
-tasks {
-    withType<KotlinCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
     }
+}
 
-    withType<JavaCompile>().configureEach {
-        sourceCompatibility = JavaVersion.VERSION_17.toString()
-        targetCompatibility = JavaVersion.VERSION_17.toString()
-    }
+kotlin {
+    jvmToolchain(21)
+}
 
-    withType<DependencyUpdatesTask> {
-        rejectVersionIf {
-            isNonStable(candidate.version)
-        }
-    }
-
-    test {
-        useJUnitPlatform()
+tasks.withType<DependencyUpdatesTask> {
+    rejectVersionIf {
+        isNonStable(candidate.version)
     }
 }
 
@@ -84,26 +75,8 @@ fun isNonStable(version: String): Boolean {
     return isStable.not()
 }
 
-koverReport {
-    defaults {
-        html {
-            onCheck = true
-        }
-
-        verify {
-            onCheck = true
-            rule {
-                isEnabled = true
-                entity = kotlinx.kover.gradle.plugin.dsl.GroupingEntityType.APPLICATION
-                bound {
-                    minValue = 0
-                    maxValue = 99
-                    metric = kotlinx.kover.gradle.plugin.dsl.MetricType.LINE
-                    aggregation = kotlinx.kover.gradle.plugin.dsl.AggregationType.COVERED_PERCENTAGE
-                }
-            }
-        }
-    }
+tasks.test {
+    useJUnitPlatform()
 }
 
 publishing {
@@ -125,7 +98,7 @@ publishing {
                     developer {
                         id.set("erwin-kok")
                         name.set("Erwin Kok")
-                        email.set("github@erwinkok.org")
+                        email.set("erwin.kok@protonmail.com")
                         url.set("https://github.com/erwin-kok/")
                         roles.set(listOf("owner", "developer"))
                     }
