@@ -3,6 +3,7 @@ package org.erwinkok.result
 
 class Err(val error: Error) : Result<Nothing>() {
     constructor(error: String) : this(Error(error))
+    constructor(error: Throwable) : this(Error(error))
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

@@ -2,42 +2,28 @@
 
 [![ci](https://github.com/erwin-kok/result-monad/actions/workflows/ci.yaml/badge.svg)](https://github.com/erwin-kok/result-monad/actions/workflows/ci.yaml)
 [![Maven Central](https://img.shields.io/maven-central/v/org.erwinkok.result/result-monad)](https://central.sonatype.com/artifact/org.erwinkok.result/result-monad)
-[![Kotlin](https://img.shields.io/badge/kotlin-2.2.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.3.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![License](https://img.shields.io/github/license/erwin-kok/result-monad.svg)](https://github.com/erwin-kok/result-monad/blob/master/LICENSE)
-
-## Usage 
-
-Kotlin DSL:
-
-```kotlin
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation("org.erwinkok.result:result-monad:$latest")
-}
-```
 
 ## Introduction
 
-Suppose you have the following method signature:
+Consider the following function signature:
 
 ```kotlin
-fun createItem(name: string): String {
+fun createItem(name: String): String {
     ...
 } 
 ```
 
-This tells you everything to know, right? No, not really. It doesn't say anything about the error conditions it can
-return or throw. Of course, you can add it to the documentation, but the source code itself should be the documentation
-(i.e. if writing documentation as a comment, it can deviate over time from the real code). So the code itself should
-be as readable and understandable as possible.
+While simple, this signature communicates only the success path. It provides no information about possible failure modes, nor whether failure is expressed via return values or exceptions.
 
-In Java (and other languages) you can specify that the method can throw an exception (by adding, for example, a
-`throws IllegalArgumentException`).
+Documenting error conditions in comments is brittle: comments drift, but types do not. For long-lived codebases, the type system should describe both success and failure.
 
-However, when the caller deals with the exception:
+This library provides a small, explicit Result type to model this directly.
+
+## Motivation
+
+Exception-based control flow is implicit and non-local. Once execution enters a `try` block, it becomes unclear which operation caused control to jump to a `catch` clause.
 
 ```kotlin
 try {
@@ -50,28 +36,27 @@ try {
 }
 ```
 
-You don't know which method threw the exception. This is especially cumbersome if, for example, `doSometing()` opens a
-socket and `doSomethingElse()` throws an exception. Normally, `doSomeCleanup()` would close the socket, but if an
-exception was thrown, it would never get there. Of course, you can handle this with a flag `socketOpened` or something
-and in the catch-clause you can check this flag and close the socket there. But this looks, in my opinion, rather ugly
-and is error-prone. That is where the result-monad comes in.
+In this example, it is impossible to determine:
+
+- Which call failed
+- Which resources were successfully acquired
+- Which cleanup steps are still required
+
+This complicates reasoning about control flow and resource lifetime.
+
+An explicit Result type keeps failure local and visible.
 
 ## Result Monad
 
-In its generic form, a result monad has two result values: one value for the success case, and an error for the failure
-case:
+In its generic form, a result monad represents either:
+
+- Ok(value) on success
+- Err(error) on failure
+
+Example:
 
 ```kotlin
-fun doSomething(): Result<...ok value ..., ...error...  > {
-    ...
-}
-```
-
-The actual implementation of this method can return either a 'normal' result value, by using `Ok(...)`, or an error
-value, by using `Err(...)`. For example:
-
-```kotlin
-fun divideNumbers(a: Int, b: Int): Result<Float, Error> {
+fun divideNumbers(a: Float, b: Float): Result<Float> {
     if (b == 0) {
         return Err("Division by zero is not allowed")
     }
@@ -79,8 +64,7 @@ fun divideNumbers(a: Int, b: Int): Result<Float, Error> {
 }
 ```
 
-Callers can check the returning `Result` value whether an error condition is raised. If not, it can get the ok-value.
-Otherwise, it can handle the error case:
+The caller is required to handle the result explicitly:
 
 ```kotlin
 val result = divideNumber(n1, n2)
@@ -92,78 +76,64 @@ val result = divideNumber(n1, n2)
 log.info { "n1 divided by n2 is $result" }
 ```
 
+Failure is now part of the normal control flow, not an exceptional side-channel.
+
 ## Chaining calls
 
-Because `Result` has two sub-types, one for the value and one for the error, we can act upon these two different cases.
-For example by doing something when `Ok` was returned, and something else when `Err` was returned. `map`, for example,
-applies the given lambda when an `Ok` value was returned, or just passes the error along when `Err` was returned.
+Because Result distinguishes success and failure, operations can be composed safely.
+
+Functions such as map apply transformations only when a value is present:
 
 ```kotlin
 val result = divideNumber(n1, n2)
     .map { it * 2 }
 ```
 
-The example above means that when `divideNumber` returns `Ok` the value is multiplied by 2. If an `Err` was returned,
-the
-multiplication is not performed, but the error original error is returned.
+If `divideNumbers` returns `Err`, the transformation is skipped and the error is propagated unchanged.
 
-Of course, this can be chained with multiple calls.
+This enables linear, readable pipelines without nested conditionals or exception handling.
 
-## Inspiration, based on
-
-The idea of a result monad is not new, some other programming languages have something similar already present, like: Go
-Lang and Rust.
-
-There are already some libraries available in Kotlin, in particular the excellent `kotlin-result` project created by
-Michael Bull: [kotlin-result](https://github.com/michaelbull/kotlin-result/) where this project is based on. The main
-difference between his project and this one is that the `error` case always has an `Error` as object:
-
-`kotlin-result`:
+## Installation
 
 ```kotlin
-fun doSomething(): Result<String, Error> {
+repositories {
+    mavenCentral()
+}
 
+dependencies {
+    implementation("org.erwinkok.result:result-monad:$latest")
 }
 ```
 
-This project:
+## Design Choices
+
+### Fixed Error Type
+
+Unlike many `Result<T, E>` implementations, this library uses a **fixed error type**:
 
 ```kotlin
-fun doSomething(): Result<String> {
-
-}
+fun doSomething(): Result<String>
 ```
 
-This saves typing.
-
-The `Error` object is a small wrapper around a string and is in itself an Exception. We can instantiate an `Error`
-object by either a string or an exception. Because of this, the `Err()` can be created more compact:
-
-`kotlin-result`:
+This reduces verbosity and keeps APIs compact. Error is a lightweight wrapper around a message and is itself an Exception. It can be created from either a string or an existing exception:
 
 ```kotlin
-return Err(IllegalArgumentException("The argument is wrong!"))
+return Err("Invalid argument")
+
+
+return Err(IllegalArgumentException()())
 ```
 
-This project:
+### Trade-off
+
+Using a fixed error type means the original exception type is not preserved. When error identity matters, a stable error instance can be used:
 
 ```kotlin
-return Err("The argument is wrong!")
+val illegalArgumentError = Error("Illegal argument")
 ```
 
-Remember, an `Error` is a small wrapper around a string, and the error case of the `Result` is always `Error`. This
-means, the Exception type is lost. However, this can be solved by using a fixed Error:
-
 ```kotlin
-val illegalArgumentError = Error("The argument provided is illegal")
-...
-return Err(illegalArgumentError)
-```
-
-...and then check the result for an error, and if an error occurs, check for the specific error:
-
-```kotlin
-    val result = doSomething()
+val result = doSomething()
     .getOrElse {
         if (it === illegalArgumentError) {
             // handle illegal argument
@@ -173,35 +143,23 @@ return Err(illegalArgumentError)
     }
 ```
 
-## Contributing
+This design favors:
 
-Bug reports and pull requests are welcome on [GitHub](https://github.com/erwin-kok/result-monad).
+- Explicit control flow
+- Simpler APIs
+- Reduced generic noise
 
-## Contact
+at the cost of typed error hierarchies.
 
-If you want to contact me, please write an e-mail to: [erwin-kok@gmx.com](mailto:erwin-kok@gmx.com)
+### Prior Art
+
+The concept of a result type is well established in languages such as Go and Rust.
+
+In Kotlin, this library is inspired by Michael Bull’s excellent [kotlin-result](https://github.com/michaelbull/kotlin-result/).
+
+The primary difference is the use of a fixed error type, trading flexibility for simplicity and consistency.
 
 ## License
 
 This project is licensed under the BSD-3-Clause license, see [`LICENSE`](LICENSE) file for more details.
 
-Since this project is partly based on the awesome `kotlin-result` project, created by Michael Bull,
-I add that license here as well:
-
-```text
-Copyright (c) 2017-2022 Michael Bull (https://www.michael-bull.com)
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-```
-
-`kotlin-result` is available at: https://github.com/michaelbull/kotlin-result

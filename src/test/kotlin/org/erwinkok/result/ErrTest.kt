@@ -15,6 +15,11 @@ internal class ErrTest {
     }
 
     @Test
+    fun `errors should be equal for same exception`() {
+        assertEquals(Err(IllegalArgumentException()), Err(IllegalArgumentException()))
+    }
+
+    @Test
     fun `errors should be equal for same error`() {
         val error = Err("hello")
         assertSame(error, error)

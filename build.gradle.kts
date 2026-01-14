@@ -5,7 +5,7 @@ import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
-    kotlin("jvm") version "2.2.0"
+    kotlin("jvm") version "2.3.0"
     `java-library`
     `java-test-fixtures`
     signing
@@ -23,7 +23,7 @@ repositories {
 }
 
 group = "org.erwinkok.result"
-version = "1.4.0"
+version = "1.5.0"
 
 java {
     withSourcesJar()
