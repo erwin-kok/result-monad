@@ -1,5 +1,4 @@
 [versions]
-kotlin = "2.2.0"
 kotlinx-coroutines = "1.10.2"
 kotlin-logging = "7.0.14"
 junit-jupiter = "6.0.2"
